@@ -38,21 +38,26 @@ async function send() {
 
   try {
     const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        messages: [
-          { role:'system', content:'You are ChatGPT, a helpful and concise assistant.'},
-          ...history.map(({role, content}) => ({role, content}))
-        ]
-      })
-    });
-    const data = await res.json();
-    const reply = data.reply || 'No reply.';
-    thinkingEl.classList.remove('thinking');
-    thinkingEl.textContent = reply;
-    history.push({ role:'assistant', content: reply, time: now() });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  method: 'POST',
+  headers: { 'Content-Type':'application/json' },
+  body: JSON.stringify({
+    messages: [
+      { role:'system', content:'You are ChatGPT, a helpful and concise assistant.'},
+      ...history.map(({role, content}) => ({role, content}))
+    ]
+  })
+});
+const data = await res.json();
+const reply = data.reply;
+if (data.error) {
+  thinkingEl.classList.remove('thinking');
+  thinkingEl.textContent = 'Error: ' + data.error;
+} else {
+  thinkingEl.classList.remove('thinking');
+  thinkingEl.textContent = reply || 'No reply.';
+  history.push({ role:'assistant', content: reply || 'No reply.', time: now() });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+}
   } catch (err) {
     thinkingEl.classList.remove('thinking');
     thinkingEl.textContent = 'Error: ' + (err?.message || 'Failed to reach /api/chat');
