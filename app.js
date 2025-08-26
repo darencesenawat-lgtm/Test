@@ -19,7 +19,7 @@ function addMessage(role, content, time = now()) {
 }
 
 function restore() {
-  if (history.length === 0) { addMessage('assistant', 'Hi! I am ChatGPT inside a PWA. Ask me anything.'); return; }
+  if (history.length === 0) { addMessage('assistant', 'Hi! I am DS AI. Ask me anything.'); return; }
   history.forEach(m => addMessage(m.role, m.content, m.time));
 }
 
